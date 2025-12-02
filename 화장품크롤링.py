@@ -534,17 +534,6 @@ def crawl_oliveyoung():
     """올리브영 랭킹 1~10위 크롤링 구조."""
     site_name = PLATFORM_NAMES[0]
     ranking_url = RANKING_URLS[0]
-    """
-    하나의 사이트(플랫폼)에 대해 랭킹 1~10위까지 크롤링하는 구조만 구현한 함수.
-
-    실제 구현 시:
-        1. ranking_url 로 접속
-        2. HTML 파싱 (requests + BeautifulSoup 또는 Selenium 등)
-        3. 1등부터 10등까지 반복하면서
-           [상품명, 이미지 src, 상품 URL, 브랜드, 가격] 추출
-
-    현재 코드는 구조를 보여주기 위해 더미 데이터를 만들어서 반환한다.
-    """
 
     items = []
 
