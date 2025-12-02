@@ -5,6 +5,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk, messagebox
 import pymysql
+import crawl
 
 # MySQL 연결
 sql =pymysql.connect(
@@ -83,12 +84,6 @@ PLATFORM_NAMES = {
     3: "아마존"
 }
 
-RANKING_URLS = {
-    0: "https://www.oliveyoung.co.kr/store/main/getBestList.do?t_page=%ED%99%88&t_click=GNB&t_gnb_type=%EB%9E%AD%ED%82%B9&t_swiping_type=N",
-    1: "https://www.qoo10.jp/gmkt.inc/Bestsellers/",
-    2: "https://www.coupang.com/np/categories/176522?traceId=miithkrj", #쿠팡 화장품 랭킹순
-    3: "https://www.amazon.com/s?i=specialty-aps&bbn=16225010011&rh=n%3A%252116225010011%2Cn%3A3777891&language=ko&ref=nav_em__nav_desktop_sa_intl_personal_care_0_2_17_7", #아마존 퍼스널 케어
-}
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #  크롤링 DTO 변환 함수 (예비)
@@ -105,96 +100,6 @@ def crawl_site_generic(site_name: str):
         price = f"{rank * 1000}원"
 
         items.append([ img_src, url, name,brand, price])
-
-    return items
-
-
-
-# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#  사이트별 래퍼 크롤러
-# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def crawl_oliveyoung():
-    """올리브영 랭킹 1~10위 크롤링 구조."""
-    site_name = PLATFORM_NAMES[0]
-    ranking_url = RANKING_URLS[0]
-    """
-    하나의 사이트(플랫폼)에 대해 랭킹 1~10위까지 크롤링하는 구조만 구현한 함수.
-
-    실제 구현 시:
-        1. ranking_url 로 접속
-        2. HTML 파싱 (requests + BeautifulSoup 또는 Selenium 등)
-        3. 1등부터 10등까지 반복하면서
-           [상품명, 이미지 src, 상품 URL, 브랜드, 가격] 추출
-
-    현재 코드는 구조를 보여주기 위해 더미 데이터를 만들어서 반환한다.
-    """
-
-    items = []
-
-    # 현재는 “1위부터 10위까지 반복한다” 구조를 보여주기 위한 더미 루프
-    for rank in range(1, 11):
-        name = f"[더미] {site_name}"
-        img_src = f"https://example.com/{site_name}_img_{rank}.jpg"
-        url = f"https://example.com/{site_name}_product_{rank}"
-        brand = f"{site_name}브랜드{rank}"
-        price = f"{rank * 1000}"
-
-        items.append([ img_src, url,name, brand, price])
-
-    return items #최종적으로 crawl_in_thread 에서 result[idx] = data 로 저장됨
-
-
-def crawl_qoo10():
-    """큐텐 랭킹 1~10위 크롤링 구조."""
-    site_name = PLATFORM_NAMES[1]
-    ranking_url = RANKING_URLS[1]
-
-    items = []
-    for rank in range(1, 11):
-        name = f"[더미] {site_name} 상품 {rank}위"
-        img_src = f"https://example.com/{site_name}_img_{rank}.jpg"
-        url = f"https://example.com/{site_name}_product_{rank}"
-        brand = f"{site_name}브랜드{rank}"
-        price = f"{rank * 1000}원"
-
-        items.append([ img_src, url, name,brand, price])
-
-    return items
-
-
-def crawl_coupang():
-    """쿠팡 랭킹 1~10위 크롤링 구조."""
-    site_name = PLATFORM_NAMES[2]
-    ranking_url = RANKING_URLS[2]
-
-    items = []
-    for rank in range(1, 11):
-        name = f"[더미] {site_name} 상품 {rank}위"
-        img_src = f"https://example.com/{site_name}_img_{rank}.jpg"
-        url = f"https://example.com/{site_name}_product_{rank}"
-        brand = f"{site_name}브랜드{rank}"
-        price = f"{rank * 1000}원"
-
-        items.append([ img_src, url, name,brand, price])
-
-    return items
-
-
-def crawl_amazon():
-    """아마존 랭킹 1~10위 크롤링 구조."""
-    site_name = PLATFORM_NAMES[3]
-    ranking_url = RANKING_URLS[3]
-
-    items = []
-    for rank in range(1, 11):
-        name = f"[더미] {site_name} 상품 {rank}위"
-        img_src = f"https://example.com/{site_name}_img_{rank}.jpg"
-        url = f"https://example.com/{site_name}_product_{rank}"
-        brand = f"{site_name}브랜드{rank}"
-        price = f"{rank * 1000}원"
-
-        items.append([ img_src, url,name, brand, price])
 
     return items
 
@@ -248,7 +153,7 @@ def save_result_to_file():
 
         for idx, item in enumerate(items, start=1):
             try:
-                name, img_src, url, brand, price = item
+                img_src, url, name,brand, price = item
             except ValueError:
                 lines.append(f"  {idx}위: 데이터 형식 오류 (list 길이 5 아님)\n\n")
                 continue
@@ -290,7 +195,7 @@ def display_top_items():
 
         for rank, item in enumerate(items, start=1):
             try:
-                name, img_src, url, brand, price = item
+                 img_src, url, name,brand, price = item
             except ValueError:
                 text_output.insert(
                     tk.END,
@@ -334,10 +239,10 @@ def run_crawling():
 
         # (플랫폼 번호, 크롤러 함수) 매핑
         funcs = [
-            (0, crawl_oliveyoung),
-            (1, crawl_qoo10),
-            (2, crawl_coupang),
-            (3, crawl_amazon),
+            (0, crawl.crawl_oliveyoung),
+            (1, crawl.crawl_qoo10),
+            (2, crawl.crawl_coupang),
+            (3, crawl.crawl_amazon),
         ]
 
         # 4개의 쓰레드 생성 및 시작
