@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -41,7 +40,8 @@ for item in find:
     result.append([href ,img_src, name ,brand , price])
 
 print(result)
-=======
+
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -95,4 +95,3 @@ def oli():
     driver = webdriver.Chrome(options=options)
     driver.get(url)
     driver.implicitly_wait(5) #페이지 로딩 대기
->>>>>>> 975b3dc (커밋)
