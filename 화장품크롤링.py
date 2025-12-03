@@ -21,9 +21,19 @@ path = sql.cursor()
 def DBinsert(result):
     for platform in range(4):
         for index in range(len(result[platform])):
-            # path.execute(f'insert into rankingitem values(null,{platform},{result[platform][index][0]},{result[platform][index][1]},{result[platform][index][2]},{result[platform][index][3]},{result[platform][index][4]});')
-            print(f"insert into rankingitem values(null,{platform},{result[platform][index][0]},{result[platform][index][1]},{result[platform][index][2]},{result[platform][index][3]},{result[platform][index][4]});")
-
+            path.execute(
+                'INSERT INTO rankingitem VALUES (NULL,%s,%s,%s,%s,%s,%s)',
+                (
+                    platform,
+                    result[platform][index][0],  # img
+                    result[platform][index][1],  # url
+                    result[platform][index][2],  # name
+                    result[platform][index][3],  # brand
+                    result[platform][index][4],  # price
+                )
+            )
+            
+            sql.commit() #트렌젝션 커밋
 #DB 예외 처리 코드
 def safe_DBinsert_with_ui(result):
 

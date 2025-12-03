@@ -3,8 +3,6 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import time
 
-result =[]
-
 num = 10 # 상품 크롤링 개수
 
 RANKING_URLS = {
@@ -33,8 +31,43 @@ PLATFORM_NAMES = {
 #     finally:
 #         driver.close()
 
+def crawl_oliveyoung():
+    site_name = PLATFORM_NAMES[0]
+
+    items = []
+
+    # 현재는 “1위부터 10위까지 반복한다” 구조를 보여주기 위한 더미 루프
+    for rank in range(1, 11):
+        name = f"[더미] {site_name} 상품 {rank}위"
+        img_src = "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/400/10/0000/0023/A00000023633808ko.jpg?l=ko"
+        url = "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000236338&dispCatNo=90000010009&trackingCd=Best_Sellingbest&t_page=%EB%9E%AD%ED%82%B9&t_click=%ED%8C%90%EB%A7%A4%EB%9E%AD%ED%82%B9_%EC%A0%84%EC%B2%B4_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8&t_number=1"
+        brand = f"{site_name}브랜드{rank}"
+        price = f"{rank * 1000}원"
+
+        items.append([img_src, url, name, brand, price])
+
+    return items
+
+def crawl_coupang():
+    site_name = PLATFORM_NAMES[2]
+
+    items = []
+    for rank in range(1, 11):
+        name = f"[더미] {site_name} 상품 {rank}위"
+        img_src = "https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/400/10/0000/0023/A00000023633808ko.jpg?l=ko"
+        url = "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000236338&dispCatNo=90000010009&trackingCd=Best_Sellingbest&t_page=%EB%9E%AD%ED%82%B9&t_click=%ED%8C%90%EB%A7%A4%EB%9E%AD%ED%82%B9_%EC%A0%84%EC%B2%B4_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8&t_number=1"
+        brand = f"{site_name}브랜드{rank}"
+        price = f"{rank * 1000}원"
+
+        items.append([ img_src, url, name,brand, price])
+
+    return items
+
+
+
 
 def crawl_qoo10(): #큐텐
+    result =[]
     try:
         options = webdriver.ChromeOptions()
         options.add_argument('lang=ko_KR') # 사용언어 한국어
@@ -71,9 +104,10 @@ def crawl_qoo10(): #큐텐
     finally:
         driver.close()
 
-    return result
+    return result #최종적으로 crawl_in_thread 에서 result[idx] = data 로 저장됨
 
 def crawl_amazon(): #아마존
+    result = []
     try:
         options = webdriver.ChromeOptions()
         options.add_argument('lang=ko_KR') # 사용언어 한국어
@@ -100,6 +134,3 @@ def crawl_amazon(): #아마존
 
     finally:
         driver.close()
-
-
-print(crawl_oliveyoung())
