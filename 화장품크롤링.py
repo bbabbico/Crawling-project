@@ -8,7 +8,7 @@ import pymysql
 import crawl
 
 # MySQL 연결
-sql =pymysql.connect(
+sql =pymysql.connect( #SQL 서버 도커 서버 주소로 바꿔야함.
     host='localhost',
     user='user',
     password='(ehgus2003)',
