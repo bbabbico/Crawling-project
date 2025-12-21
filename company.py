@@ -3,6 +3,16 @@ import pandas as pd
 from datetime import datetime
 from collections import defaultdict
 from copy import deepcopy
+import pymysql
+
+sql =pymysql.connect(
+    host='localhost',
+    user='root',
+    password='ehgus2003',
+    db='tulipmetric',
+    charset='utf8')
+
+path = sql.cursor()
 
 market = ['음식료·담배','섬유·의류','기타제조','종이·목재','화학','제약','비금속',
           '금속','기계·장비','전기·전자','의료·정밀기기','운송장비·부품','유통',
@@ -78,6 +88,7 @@ def api_total_market_cap(url):
     for i in range(len(json)):
         new_dict = {k: v for k, v in json[i].items() if k not in 'ITM_NM'}
         new_dict['total_market_cap'] = new_dict.pop('DT')
+        new_dict['total_market_cap'] = int(float(new_dict['total_market_cap']))
         list3.append(new_dict)
 
     filled = fill_missing_markets(market, list3)
@@ -93,6 +104,7 @@ def api_market_per(url):
         keys_to_remove = ["C2_NM","ITM_NM"]
         new_dict = {k: v for k, v in json[i].items() if k not in keys_to_remove}
         new_dict['market_per'] = new_dict.pop('DT')
+        new_dict['market_per'] = int(float(new_dict['market_per']))
         if new_dict['C1_NM']=='제조':
             new_dict['C1_NM'] = '기타제조'
         list4.append(new_dict)
@@ -108,6 +120,7 @@ def api_stock_count(url):
         keys_to_remove = ["C2_NM","ITM_NM"]
         new_dict = {k: v for k, v in json[i].items() if k not in keys_to_remove}
         new_dict['stock_count'] = new_dict.pop('DT')
+        new_dict['stock_count'] = int(float(new_dict['stock_count']))
         list2.append(new_dict)
     filled = fill_missing_markets(market, list2)
     return filled
@@ -160,6 +173,9 @@ def apiget(url,param,params):
         for i in range(len(list2)):
             keys_to_remove = ["ITM_NM"]
             new_dict = {k: v for k, v in list2[i].items() if k not in keys_to_remove}
+            new_dict['DT'] = int(float(new_dict['DT']))
+            if new_dict['C1_NM'] == '제조':
+                new_dict['C1_NM'] = '기타제조'
             temp.append(new_dict)
 
         var = build_sector_dt_map_old_to_new(temp, months=12)
@@ -184,7 +200,7 @@ def _prev_months_old_to_new(latest_yyyymm: str, n: int) -> list[str]:
     # 과거 -> 최신으로 뒤집기
     return list(reversed(tmp))
 
-def build_sector_dt_map_old_to_new(list2: list[dict], months: int = 12) -> dict[str, list[float | None]]:
+def build_sector_dt_map_old_to_new(list2: list[dict], months: int = 12) -> dict[str, list[int | None]]:
     """
     list2 원소 예:
       {"DT":"15253.53", "PRD_DE":"202411", "C1_NM":"제약", ...}
@@ -204,7 +220,7 @@ def build_sector_dt_map_old_to_new(list2: list[dict], months: int = 12) -> dict[
             continue
 
         try:
-            dt_val = float(dt_str)
+            dt_val = int(dt_str)
         except (TypeError, ValueError):
             dt_val = None
 
@@ -273,4 +289,21 @@ stock_count = api_stock_count('https://kosis.kr/openapi/Param/statisticsParamete
 # print(stock_count)
 
 merged = merge_market_responses(chart_dict, total_market_cap, market_per, stock_count, market_order=market)
+
 print(merged)
+
+for i in merged:
+    chart_data_str = ",".join(map(str, i['chart']))
+    data_tuple = (
+        i['market_name'],
+        i['total_market_cap'],
+        i['market_per'],
+        i['stock_count'],
+        chart_data_str
+    )
+
+    sql_query = "insert into market values (null, %s, %s, %s, %s, %s)"
+    path.execute(sql_query, data_tuple)
+    sql.commit()
+
+
