@@ -22,7 +22,7 @@ market = ['음식료·담배','섬유·의류','기타제조','종이·목재','
 params ={'serviceKey':'9k9a3/dWfMNnVqG9mRPMQQ28gKPieL/zP8QrxRrOr6gP71ukyqvL7voKvS6fYOooEJiA1/UjQ/SS0sg49nZEUA==',
             'numOfRows' : 958,
             'resultType':'json',
-            'basDt'     :'20251218',
+            'basDt'     :'20251229',
             'mrktCls'   :'KOSPI'
 
              }
@@ -292,25 +292,25 @@ def merge_market_responses(chart_dict, caps_list, per_list, count_list, market_o
 # #개별 주식 정보 기조
 index = apiget('https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo',True,params)
 #
-# #산업군 정보 기조
-# chart_dict = apiget('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103130657T1+&objL1=13102130657A.01+13102130657A.02+13102130657A.03+13102130657A.04+13102130657A.05+13102130657A.06+13102130657A.07+13102130657A.08+13102130657A.09+13102130657A.10+13102130657A.11+13102130657A.12+13102130657A.13+13102130657A.14+13102130657A.15+13102130657A.16+13102130657A.17+13102130657A.20+13102130657A.21+13102130657A.22+13102130657A.23+13102130657A.24+13102130657A.25+&objL2=&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=12&outputFields=NM+ITM_NM+PRD_DE+&orgId=343&tblId=DT_343_2010_S0190',False,params)
-#
-# # 산업군별 시가총액 기조
-# total_market_cap =api_total_market_cap('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103792812T1+&objL1=13102792812A.03+13102792812A.04+13102792812A.05+13102792812A.06+13102792812A.07+13102792812A.08+13102792812A.09+13102792812A.10+13102792812A.11+13102792812A.12+13102792812A.13+13102792812A.14+13102792812A.15+13102792812A.16+13102792812A.17+13102792812A.18+13102792812A.19+13102792812A.2003+13102792812A.2004+13102792812A.21+13102792812A.22+13102792812A.23+13102792812A.24+&objL2=&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=1&outputFields=NM+ITM_NM+&orgId=343&tblId=DT_343_2010_S0026')
-#
-# # 산업군별 per 기조
-# market_per = api_market_per('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103792793T1+&objL1=13102792793A.19+13102792793A.01+13102792793A.02+13102792793A.03+13102792793A.04+13102792793A.05+13102792793A.06+13102792793A.07+13102792793A.08+13102792793A.09+13102792793A.10+13102792793A.11+13102792793A.12+13102792793A.13+13102792793A.14+13102792793A.15+13102792793A.16+13102792793A.1703+13102792793A.1704+13102792793A.18+13102792793A.20+13102792793A.21+13102792793A.22+&objL2=13102792793B.02+&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=1&outputFields=NM+ITM_NM+&orgId=343&tblId=DT_343_2010_S0052')
-#
-# # 산업군 별 상장종목수 기조
-# stock_count = api_stock_count('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103792790T1+&objL1=13102792790A.04+13102792790A.05+13102792790A.06+13102792790A.07+13102792790A.08+13102792790A.09+13102792790A.10+13102792790A.11+13102792790A.12+13102792790A.13+13102792790A.14+13102792790A.15+13102792790A.16+13102792790A.17+13102792790A.18+13102792790A.21+13102792790A.19+13102792790A.2003+13102792790A.2004+13102792790A.22+13102792790A.23+13102792790A.24+13102792790A.25+&objL2=13102792790B.02+&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=1&outputFields=NM+ITM_NM+&orgId=343&tblId=DT_343_2010_S0016')
+#산업군 정보 기조
+chart_dict = apiget('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103130657T1+&objL1=13102130657A.01+13102130657A.02+13102130657A.03+13102130657A.04+13102130657A.05+13102130657A.06+13102130657A.07+13102130657A.08+13102130657A.09+13102130657A.10+13102130657A.11+13102130657A.12+13102130657A.13+13102130657A.14+13102130657A.15+13102130657A.16+13102130657A.17+13102130657A.20+13102130657A.21+13102130657A.22+13102130657A.23+13102130657A.24+13102130657A.25+&objL2=&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=12&outputFields=NM+ITM_NM+PRD_DE+&orgId=343&tblId=DT_343_2010_S0190',False,params)
+
+# 산업군별 시가총액 기조
+total_market_cap =api_total_market_cap('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103792812T1+&objL1=13102792812A.03+13102792812A.04+13102792812A.05+13102792812A.06+13102792812A.07+13102792812A.08+13102792812A.09+13102792812A.10+13102792812A.11+13102792812A.12+13102792812A.13+13102792812A.14+13102792812A.15+13102792812A.16+13102792812A.17+13102792812A.18+13102792812A.19+13102792812A.2003+13102792812A.2004+13102792812A.21+13102792812A.22+13102792812A.23+13102792812A.24+&objL2=&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=1&outputFields=NM+ITM_NM+&orgId=343&tblId=DT_343_2010_S0026')
+
+# 산업군별 per 기조
+market_per = api_market_per('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103792793T1+&objL1=13102792793A.19+13102792793A.01+13102792793A.02+13102792793A.03+13102792793A.04+13102792793A.05+13102792793A.06+13102792793A.07+13102792793A.08+13102792793A.09+13102792793A.10+13102792793A.11+13102792793A.12+13102792793A.13+13102792793A.14+13102792793A.15+13102792793A.16+13102792793A.1703+13102792793A.1704+13102792793A.18+13102792793A.20+13102792793A.21+13102792793A.22+&objL2=13102792793B.02+&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=1&outputFields=NM+ITM_NM+&orgId=343&tblId=DT_343_2010_S0052')
+
+# 산업군 별 상장종목수 기조
+stock_count = api_stock_count('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103792790T1+&objL1=13102792790A.04+13102792790A.05+13102792790A.06+13102792790A.07+13102792790A.08+13102792790A.09+13102792790A.10+13102792790A.11+13102792790A.12+13102792790A.13+13102792790A.14+13102792790A.15+13102792790A.16+13102792790A.17+13102792790A.18+13102792790A.21+13102792790A.19+13102792790A.2003+13102792790A.2004+13102792790A.22+13102792790A.23+13102792790A.24+13102792790A.25+&objL2=13102792790B.02+&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=1&outputFields=NM+ITM_NM+&orgId=343&tblId=DT_343_2010_S0016')
 
 
 
 print(index)
-# print(chart_dict)
-# print(total_market_cap)
-# print(market_per)
-# print(stock_count)
+print(chart_dict)
+print(total_market_cap)
+print(market_per)
+print(stock_count)
 
 
 # 개별 주식
@@ -329,23 +329,23 @@ for i in index:
     path.execute(sql_query, data_tuple)
     sql.commit()
 
-# 산업군
-# merged = merge_market_responses(chart_dict, total_market_cap, market_per, stock_count, market_order=market)
-#
-# print(merged)
-#
-# for i in merged:
-#     chart_data_str = ",".join(map(str, i['chart']))
-#     data_tuple = (
-#         i['market_name'],
-#         i['total_market_cap'],
-#         i['market_per'],
-#         i['stock_count'],
-#         chart_data_str
-#     )
-#
-#     sql_query = "insert into market values (null, %s, %s, %s, %s, %s)"
-#     path.execute(sql_query, data_tuple)
-#     sql.commit()
+#산업군
+merged = merge_market_responses(chart_dict, total_market_cap, market_per, stock_count, market_order=market)
+
+print(merged)
+
+for i in merged:
+    chart_data_str = ",".join(map(str, i['chart']))
+    data_tuple = (
+        i['market_name'],
+        i['total_market_cap'],
+        i['market_per'],
+        i['stock_count'],
+        chart_data_str
+    )
+
+    sql_query = "insert into market values (null, %s, %s, %s, %s, %s)"
+    path.execute(sql_query, data_tuple)
+    sql.commit()
 
 
