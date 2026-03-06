@@ -14,17 +14,15 @@ sql =pymysql.connect(
 
 path = sql.cursor()
 
-market = ['음식료·담배','섬유·의류','기타제조','종이·목재','화학','제약','비금속',
-          '금속','기계·장비','전기·전자','의료·정밀기기','운송장비·부품','유통',
-          '전기·가스','건설','운송·창고','통신','증권','보험','일반서비스','부동산',
-          'IT 서비스','오락·문화']
+market = ['음식료·담배','섬유·의류','기타제조','종이·목재','화학','제약','비금속','금속','기계·장비','전기·전자',
+          '의료·정밀기기','운송장비·부품','유통','전기·가스','건설','운송·창고','통신','증권','보험','일반서비스',
+          '부동산','IT 서비스','오락·문화']
 
 params ={'serviceKey':'9k9a3/dWfMNnVqG9mRPMQQ28gKPieL/zP8QrxRrOr6gP71ukyqvL7voKvS6fYOooEJiA1/UjQ/SS0sg49nZEUA==',
             'numOfRows' : 958,
             'resultType':'json',
             'basDt'     :'20251229',
             'mrktCls'   :'KOSPI'
-
              }
 
 def fill_missing_markets(market_list, resp_list, name_key="C1_NM"):
@@ -280,17 +278,52 @@ def merge_market_responses(chart_dict, caps_list, per_list, count_list, market_o
     for name in ordered:
         merged.append({
             "market_name": name,
-            "total_market_cap": caps_by.get(name, {}).get("total_market_cap"),
+            "total_market_cap": caps_by.get(name, {}).get("total_market_cap")*1000000,
             "market_per":       per_by.get(name, {}).get("market_per"),
             "stock_count":      count_by.get(name, {}).get("stock_count"),
             "chart":            deepcopy(chart_dict.get(name))
         })
 
-    return merged
+    return marketresult(merged)
+
+############################ 마무리 market 작업
+def marketresult(merged): # 한달간 상승률 -> 산업군 별 상태 기록 -> 트렌딩 여부  -> 산업군 설명
+    result = []
+    for market in merged:
+        market["growth_rate30d"] = ((market["chart"][0]-market["chart"][1])/market["chart"][1]*100)
+
+        if market["market_per"]>40:
+            market["market_status"] = "overvalued"
+            market["trending"] = True
+            result.append(market)
+            continue
+        elif market["market_per"]>20:
+            market["market_status"] = "growing"
+            market["trending"] = False
+            result.append(market)
+            continue
+        elif market["market_per"]>10:
+            market["market_status"] = "stable"
+            market["trending"] = False
+            result.append(market)
+            continue
+        elif market["market_per"]>5:
+            market["market_status"] = "declining"
+            market["trending"] = False
+            result.append(market)
+            continue
+        elif market["market_per"]<5:
+            market["market_status"] = "crashed"
+            market["trending"] = False
+            result.append(market)
+            continue
+    return result
+
+
 
 
 # #개별 주식 정보 기조
-index = apiget('https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo',True,params)
+# index = apiget('https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo',True,params)
 #
 #산업군 정보 기조
 chart_dict = apiget('https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey=ZmVmMjhjMjMwYTBlZjcxODdlMWE4NGM0YjA5NjgxMWU=&itmId=13103130657T1+&objL1=13102130657A.01+13102130657A.02+13102130657A.03+13102130657A.04+13102130657A.05+13102130657A.06+13102130657A.07+13102130657A.08+13102130657A.09+13102130657A.10+13102130657A.11+13102130657A.12+13102130657A.13+13102130657A.14+13102130657A.15+13102130657A.16+13102130657A.17+13102130657A.20+13102130657A.21+13102130657A.22+13102130657A.23+13102130657A.24+13102130657A.25+&objL2=&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=M&newEstPrdCnt=12&outputFields=NM+ITM_NM+PRD_DE+&orgId=343&tblId=DT_343_2010_S0190',False,params)
@@ -306,45 +339,48 @@ stock_count = api_stock_count('https://kosis.kr/openapi/Param/statisticsParamete
 
 
 
-print(index)
-print(chart_dict)
-print(total_market_cap)
-print(market_per)
-print(stock_count)
+# print(index)
+# print(chart_dict)
+# print(total_market_cap)
+# print(market_per)
+# print(stock_count)
 
 
 # 개별 주식
-for i in index:
-    data_tuple = (
-        i['itmsNm'],
-        i['clpr'],
-        i['vs'],
-        i['fltRt'],
-        i['trqu'],
-        i['mrktTotAmt'],
-        i['market'],
-    )
-
-    sql_query = "insert into company values (null, %s, %s, %s, %s, %s, %s, %s)"
-    path.execute(sql_query, data_tuple)
-    sql.commit()
-
+# for i in index:
+#     data_tuple = (
+#         i['itmsNm'],
+#         i['clpr'],
+#         i['vs'],
+#         i['fltRt'],
+#         i['trqu'],
+#         i['mrktTotAmt'],
+#         i['market'],
+#     )
+#
+#     sql_query = "insert into company values (null, %s, %s, %s, %s, %s, %s, %s)"
+#     path.execute(sql_query, data_tuple)
+#     sql.commit()
+#
 #산업군
-merged = merge_market_responses(chart_dict, total_market_cap, market_per, stock_count, market_order=market)
+result = merge_market_responses(chart_dict, total_market_cap, market_per, stock_count, market_order=market)
 
-print(merged)
-
-for i in merged:
+print(result)
+for i in result:
     chart_data_str = ",".join(map(str, i['chart']))
     data_tuple = (
         i['market_name'],
         i['total_market_cap'],
         i['market_per'],
         i['stock_count'],
-        chart_data_str
+        chart_data_str,
+        i['growth_rate30d'],
+        i['market_status'],
+        i['trending'],
+        "설명"# i['description'],
     )
 
-    sql_query = "insert into market values (null, %s, %s, %s, %s, %s)"
+    sql_query = "insert into market values (null, %s, %s, %s, %s, %s ,%s ,%s ,%s ,%s)"
     path.execute(sql_query, data_tuple)
     sql.commit()
 
